@@ -9,7 +9,7 @@ function ResultInfo(){
 
     return (
         <div className="result-info">
-            <h2 className="recipe-title">{receta.titulo}</h2>
+            <h1 className="recipe-title">{receta.titulo}</h1>
 
             <div className="top-section">
                 <div className="ingredients-box">

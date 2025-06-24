@@ -5,6 +5,9 @@ import Modal from './Modal';
 import { useState } from "react";
 import {useNavigate} from "react-router-dom";
 import {recetasEjemplo} from "./recetaEjemplo.js";
+import axios from "axios"; 
+import qs from 'qs';
+
 
 function Plate() {
 
@@ -31,12 +34,34 @@ function Plate() {
     };
 
     /*Para traer las recetas por ingredientes, por ahora es estatico*/
-    const buscarRecetaIngrediente = () => {
-        /*Aquí se puede colocar lógica para buscar las recetas con la herramienta de elastic*/
+    const buscarRecetaIngrediente = async () => {
+        try {
+            await axios.post("http://localhost:5000/cargar");
 
+            let response;
 
-        /* Dirección a la página de busqueda con otros filtros*/
-        navigate('/search', { state: recetasEjemplo}); // se cambia el vector de recetasEjemplo por el vector de resultados
+            // Si no hay ingredientes, hacer búsqueda general con ?q=*
+            if (!ingredientesFinales || ingredientesFinales.length === 0) {
+                response = await axios.get("http://localhost:5000/api/v1/buscar", {
+                    params: { q: '*' }
+                });
+            } else {
+                // Buscar por múltiples ingredientes
+                response = await axios.get("http://localhost:5000/api/v1/buscar", {
+                    params: { ingrediente: ingredientesFinales } , // Esto genera ?ingrediente=...&ingrediente=...
+                    paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
+                });
+            }
+
+            const recetasDesdeBackend = response.data;
+
+            // Redirigir a la página de búsqueda con las recetas como estado
+            navigate('/search', { state: recetasDesdeBackend });
+
+        } catch (error) {
+            console.error("Error al buscar recetas por ingredientes:", error);
+            alert("No se pudieron obtener recetas del backend.");
+        }
     };
 
 

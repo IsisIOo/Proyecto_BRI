@@ -1,7 +1,24 @@
-
 .form-control{
     border-radius: 20px;
     width: 1200px;
     height: 40px;
+}
 
+.button {
+    border-radius: 20px;
+    width: 100px;
+    background-color: #004d00; /* verde oscuro */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s ease;
+}
+
+.button:hover {
+    background-color: #006600; /* verde un poco más claro */
+}
+
+.button:active {
+    background-color: #30b930; /* verde más oscuro */
+    transform: scale(0.96);     /* efecto visual de "hundimiento" */
 }

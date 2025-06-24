@@ -1,0 +1,9 @@
+.footer {
+    background-color: #004d00; /* verde oscuro */
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    width: 100%;
+    margin-top: 40px;
+    font-size: 14px;
+}

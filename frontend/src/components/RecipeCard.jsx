@@ -39,7 +39,7 @@ const RecipeCard = ({ receta }) => {
                 <button className="ver-receta" onClick={RecetaInfo}>VER RECETA</button>
             </div>
             <div className="recipe-content"> {/*Cara principal de la receta*/}
-                <h3 className="recipe-title">{receta.titulo}</h3>
+                <h3 className="recipe-titles">{receta.titulo}</h3>
                 <p className="recipe-time">Tiempo estimado: {receta.tiempo}</p>
                 <button className="difficulty">{receta.dificultad}</button>
             </div>

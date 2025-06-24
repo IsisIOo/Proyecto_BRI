@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import RecipeCard from "../RecipeCard.jsx";
 import Filter from "../Filter.jsx";
 import Filter2 from "../Filter2.jsx";
+import Footer from "../Footer.jsx";
 import '../../assets/css/SeachWeb.css';
 import { useState, useEffect, useMemo } from "react";
 
@@ -60,24 +61,31 @@ function SearchWeb() {
     }, [recetas]);
 
     return (
-        <>
-            <h1 onClick={Home}>Plataforma de Recetas</h1>
-            <Filter />
-            <Filter2
-                onFilter={aplicarFiltros}
-                opcionesPlato={opcionesFiltro.platos}
-                opcionesDieta={opcionesFiltro.dietas}
-                opcionesCocina={opcionesFiltro.cocinas}
-            />
+        <>  
+            <div className="page-container">
+                <div className="content">
+                    <div className="gradient-separator" style={{ height: '220px' }}>
 
-            <div className="recipe-grid">
-                {recetasFiltradas.length > 0 ? (
-                    recetasFiltradas.map((receta, index) => (
-                        <RecipeCard key={index} receta={receta} />
-                    ))
-                ) : (
-                    <p>No se encontraron recetas.</p>
-                )}
+                    <h1 onClick={Home}>Plataforma de Recetas</h1>
+                    <Filter />
+                    <Filter2
+                        onFilter={aplicarFiltros}
+                        opcionesPlato={opcionesFiltro.platos}
+                        opcionesDieta={opcionesFiltro.dietas}
+                        opcionesCocina={opcionesFiltro.cocinas}
+                    />
+                    </div>
+                    <div className="recipe-grid">
+                        {recetasFiltradas.length > 0 ? (
+                            recetasFiltradas.map((receta, index) => (
+                                <RecipeCard key={index} receta={receta} />
+                            ))
+                        ) : (
+                            <p>No se encontraron recetas.</p>
+                        )}
+                    </div>
+                </div>
+                <Footer />
             </div>
         </>
     );

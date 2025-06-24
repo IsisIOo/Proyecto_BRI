@@ -1,0 +1,10 @@
+.gradient-separator {
+    height: 100%; /* Puedes ajustar esta altura */
+    background: linear-gradient(to bottom, #004d00, #ffffff); /* verde oscuro a blanco */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}

@@ -1,15 +1,25 @@
 import Filter from "../Filter.jsx";
 import Plate from "../Plate.jsx";
-import {useNavigate} from "react-router-dom";
+import Footer from "../Footer.jsx";
+import { useNavigate } from "react-router-dom";
+import '../../assets/css/Home.css';
 
-function Home(){
+function Home() {
     return (
         <>
-            <h1>Plataforma de Recetas</h1>
-            <Filter />
-            <Plate />
+        <div className="page-container">
+            <div className="content">
+                <div className="gradient-separator">
+                    <br />
+                    <h1>Plataforma de Recetas</h1>
+                    <Filter />
+                </div>
+                <Plate />
+            </div>
+            <Footer/>
+        </div>
         </>
-    )
+    );
 }
 
 export default Home;
