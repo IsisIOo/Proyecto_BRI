@@ -139,7 +139,8 @@ def filtrar_recetas():
             "q": q,
             "query_by": "titulo,descripcion,ingredientes",
             "filter_by": filter_by,
-            "sort_by": "orden:asc"
+            "sort_by": "orden:asc",
+            "per_page": 12
         })
 
         solo_documentos = [hit["document"] for hit in resultados["hits"]]
