@@ -1,0 +1,108 @@
+version: "3.8"
+services:
+  # Frontend services
+  frontend1:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    networks:
+      - frontend-network
+
+  frontend2:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    networks:
+      - frontend-network
+
+  frontend3:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    networks:
+      - frontend-network
+
+  # Backend services
+  backend1:
+    build:
+      context: ./backend
+    ports:
+      - "5001:8090"       # Aquí el puerto interno será 8090 según Flask
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - typesense
+    networks:
+      - backend-network
+
+  backend2:
+    build:
+      context: ./backend
+    ports:
+      - "5002:8090"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - typesense
+    networks:
+      - backend-network
+
+  backend3:
+    build:
+      context: ./backend
+    ports:
+      - "5003:8090"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - typesense
+    networks:
+      - backend-network
+
+  # Typesense
+  typesense:
+    image: typesense/typesense:0.25.2
+    command: --data-dir /data --api-key=xyz --listen-port=8108
+    volumes:
+      - ./typesense-data:/data
+    ports:
+      - "8108:8108"
+    networks:
+      - backend-network
+
+  # Nginx for frontend load balancing
+  nginx-frontend:
+    image: nginx:latest
+    ports:
+      - "8070:80"
+    volumes:
+      - ./nginx-frontend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend1
+      - frontend2
+      - frontend3
+    networks:
+      - frontend-network
+
+  # Nginx for backend load balancing
+  nginx-backend:
+    image: nginx:latest
+    ports:
+      - "8090:8090"        # Nginx escucha en 80 y se expone en 8090 en host
+    volumes:
+      - ./nginx-backend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - backend-network
+
+networks:
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge

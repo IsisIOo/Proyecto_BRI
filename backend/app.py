@@ -12,10 +12,10 @@ import os
 
 app = Flask(__name__)
 
-CORS(app) # Esto habilita CORS para todas las rutas y orígenes
+CORS(app)   # Esto habilita CORS para todas las rutas y orígenes
 # Configuración de Typesense
 client = typesense.Client({
-    "nodes": [{"host": "localhost", "port": "8108", "protocol": "http"}],
+    "nodes": [{"host": "typesense", "port": "8108", "protocol": "http"}],
     "api_key": "xyz",
     "connection_timeout_seconds": 2
 })
@@ -51,7 +51,7 @@ def crear_coleccion():
         client.collections.create(schema)
 
 # Leer recetas desde archivo JSON
-def cargar_recetas_desde_json(path=r"C:\Users\nicol\OneDrive\Documentos\GitHub\Proyecto_BRI\backend\recetas.json"):
+def cargar_recetas_desde_json(path=os.path.join(os.path.dirname(__file__), "recetas.json")):
     try:
         with open(path, "r", encoding="utf-8") as file:
             recetas = json.load(file)
@@ -78,7 +78,8 @@ def cargar_recetas():
         except Exception as e:
             errores.append({"titulo": receta.get("titulo", "Sin título"), "error": str(e)})
 
-    return jsonify({"cargadas": cargadas, "errores": errores})
+    # Devuelve solo status 204 No Content sin cuerpo
+    return '', 204
 
 # Endpoint para buscar recetas
 @app.route("/buscar", methods=["GET"])
@@ -193,4 +194,4 @@ def buscar_por_titulo():
         return jsonify({"error": str(e)}), 500
     
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8090,debug=True)

@@ -1,7 +1,6 @@
 import Filter from "../Filter.jsx";
 import Plate from "../Plate.jsx";
 import Footer from "../Footer.jsx";
-import { useNavigate } from "react-router-dom";
 import '../../assets/css/Home.css';
 
 function Home() {

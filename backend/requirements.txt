@@ -1,0 +1,4 @@
+flask
+flask-cors
+typesense
+typing_extensions

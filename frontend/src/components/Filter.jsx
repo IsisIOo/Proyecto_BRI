@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import '../assets/css/Filter.css';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import recetas from "../services/recetas";
 
 function Filter() {
     const [buscar, setBuscar] = useState('');
@@ -11,9 +11,8 @@ function Filter() {
         e.preventDefault(); // Evita que se recargue la página
 
         try {
-            const response = await axios.get("http://localhost:5000/api/v1/buscar_por_titulo", {
-                params: { titulo: buscar }
-            });
+            // Busca recetas por título
+            const response = await recetas.buscarRecetasPorTitulo(buscar);
 
             const resultados = response.data;
 

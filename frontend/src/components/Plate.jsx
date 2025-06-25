@@ -4,9 +4,7 @@ import plateImage from '../assets/food_plate.png';
 import Modal from './Modal';
 import { useState } from "react";
 import {useNavigate} from "react-router-dom";
-import {recetasEjemplo} from "./recetaEjemplo.js";
-import axios from "axios"; 
-import qs from 'qs';
+import recetas from "../services/recetas";
 
 
 function Plate() {
@@ -36,21 +34,16 @@ function Plate() {
     /*Para traer las recetas por ingredientes, por ahora es estatico*/
     const buscarRecetaIngrediente = async () => {
         try {
-            await axios.post("http://localhost:5000/cargar");
+            await recetas.cargarRecetas(); // Carga las recetas al iniciar
 
             let response;
 
             // Si no hay ingredientes, hacer búsqueda general con ?q=*
             if (!ingredientesFinales || ingredientesFinales.length === 0) {
-                response = await axios.get("http://localhost:5000/api/v1/buscar", {
-                    params: { q: '*' }
-                });
+                response = await recetas.buscarTodasLasRecetas("*");
             } else {
                 // Buscar por múltiples ingredientes
-                response = await axios.get("http://localhost:5000/api/v1/buscar", {
-                    params: { ingrediente: ingredientesFinales } , // Esto genera ?ingrediente=...&ingrediente=...
-                    paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
-                });
+                response = await recetas.buscarRecetasPorIngredientes(ingredientesFinales);
             }
 
             const recetasDesdeBackend = response.data;
