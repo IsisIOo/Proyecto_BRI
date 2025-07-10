@@ -2,7 +2,7 @@ import '../assets/css/Plate.css';
 import '../assets/css/IngredientSelect.css';
 import plateImage from '../assets/food_plate.png';
 import Modal from './Modal';
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import recetas from "../services/recetas";
 
@@ -80,31 +80,35 @@ function Plate() {
         }
     };
 
-
     /* Listas de ingredientes, elegidos según la posición en el plato*/
     /* Nota: Hay que ordenarlos por abededario*/
-    const up_left = [
-        "Arroz integral", "Arroz blanco", "Avena", "Cebada", "Trigo sarraceno",
-        "Mijo", "Quinoa", "Amaranto", "Centeno", "Trigo duro", "Pan integral",
-        "Pan de centeno", "Pan de avena", "Pasta de trigo integral", "Pasta de sémola",
-        "Fideos de arroz", "Tortillas de maíz", "Tortillas de trigo", "Cuscús",
-        "Bulgur", "Harina de trigo", "Harina de maíz", "Harina de avena",
-        "Galletas integrales", "Cereal de desayuno"
-    ];
+    const [upLeft, setUpLeft] = useState([]);
+    const [upRight, setUpRight] = useState([]);
+    const [downLeft, setDownLeft] = useState([]);
+    const [downRight, setDownRight] = useState([]);
 
-    const up_right = ['Manzana', 'Zanahoria', 'Espinaca', "Banana", "Pera",
-        "Naranja", "Frutilla", "Arándanos", "Uvas", "Tomate", "Pepino", "Brócoli", "Coliflor",
-        "Lechuga", "Pimiento", "Cebolla", "Ajo", "Papa", "Batata", "Remolacha", "Calabaza", "Apio", "Rúcula"
-    ];
+    useEffect(() => {
+        const cargarTodo = async () => {
+            try {
+                // primero espera las recetas
+                await recetas.cargarRecetas();
 
-    const down_left = ['Pollo', 'Tofu', 'Frijoles', "Carne de res", "Carne de cerdo",
-        "Pavo", "Huevo", "Lentejas", "Garbanzos", "Chícharos", "Tempeh", "Seitán", "Salmón",
-        "Atún", "Sardinas", "Mariscos", "Huevos duros", "Proteína vegetal texturizada"
-    ];
-    const down_right = ['Leche', 'Huevo', 'Yogur', 'Queso', "Mantequilla", "Crema", "Leche condensada",
-        "Leche evaporada", "Queso crema", "Queso ricotta", "Queso parmesano", "Helado", "Leche vegetal",
-        "Yogur griego", "Kéfir", "Queso cottage", "Leche de almendras", "Leche de soja", "Leche de avena"
-    ];
+                const response = await recetas.obtenerIngredientesAgrupados();
+                const data = response.data;
+
+                setUpLeft(data.granos); // granos y derivados
+                setUpRight(data.frutas_verduras); // frutas y verduras
+                setDownLeft(data.proteinas); // proteínas
+                setDownRight(data.lacteos_otros); // lácteos y otros
+
+            } catch (error) {
+                console.error("Error cargando recetas o ingredientes:", error);
+            }
+        };
+
+        cargarTodo();
+    }, []);
+
 
     return (
         <>
@@ -129,7 +133,7 @@ function Plate() {
                             width="200"
                             height="200"
                             className={`sector-overlay ${activeSector === 'up_left' ? 'active' : ''}`}
-                            onClick={() => handleSectorClick('Granos y derivados', up_left, 'left', 'up_left')}
+                            onClick={() => handleSectorClick('Granos y derivados', upLeft, 'left', 'up_left')}
                         />
                         <rect
                             x="200"
@@ -137,7 +141,7 @@ function Plate() {
                             width="200"
                             height="200"
                             className={`sector-overlay ${activeSector === 'up_right' ? 'active' : ''}`}
-                            onClick={() => handleSectorClick('Frutas y Verduras', up_right, 'right', 'up_right')}
+                            onClick={() => handleSectorClick('Frutas y Verduras', upRight, 'right', 'up_right')}
                         />
                         <rect
                             x="0"
@@ -145,7 +149,7 @@ function Plate() {
                             width="200"
                             height="200"
                             className={`sector-overlay ${activeSector === 'down_left' ? 'active' : ''}`}
-                            onClick={() => handleSectorClick('Proteínas', down_left, 'left', 'down_left')}
+                            onClick={() => handleSectorClick('Proteínas', downLeft, 'left', 'down_left')}
                         />
                         <rect
                             x="200"
@@ -153,7 +157,7 @@ function Plate() {
                             width="200"
                             height="200"
                             className={`sector-overlay ${activeSector === 'down_right' ? 'active' : ''}`}
-                            onClick={() => handleSectorClick('Lácteos y otros', down_right, 'right', 'down_right')}
+                            onClick={() => handleSectorClick('Lácteos y otros', downRight, 'right', 'down_right')}
                         />
                     </g>
                 </svg>

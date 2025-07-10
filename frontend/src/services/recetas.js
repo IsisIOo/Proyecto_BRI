@@ -38,9 +38,16 @@ const cargarRecetas = () => {
     return httpClient.post("/cargar");
 }
 
+/* Obtiene ingredientes agrupados */
+const obtenerIngredientesAgrupados = () => {
+    return httpClient.get("/api/v1/ingredientes_agrupados");
+};
+
+
 export default {
     buscarTodasLasRecetas,
     buscarRecetasPorIngredientes,
     buscarRecetasPorTitulo,
-    cargarRecetas
+    cargarRecetas,
+    obtenerIngredientesAgrupados
 };

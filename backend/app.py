@@ -13,6 +13,7 @@ import os
 app = Flask(__name__)
 
 CORS(app)   # Esto habilita CORS para todas las rutas y orígenes
+
 # Configuración de Typesense
 client = typesense.Client({
     "nodes": [{"host": "typesense", "port": "8108", "protocol": "http"}],
@@ -29,6 +30,8 @@ def crear_coleccion():
             {"name": "titulo", "type": "string"},
             {"name": "descripcion", "type": "string"},
             {"name": "ingredientes", "type": "string[]", "facet": True},
+            {"name": "posicion_ingredientes", "type": "int32[]"},
+            {"name": "ingredientes_solo", "type": "string[]"},
             {"name": "categoria", "type": "string", "facet": True},
             {"name": "dificultad", "type": "string", "facet": True},
             {"name": "url", "type": "string"},
@@ -45,10 +48,14 @@ def crear_coleccion():
 
     try:
         client.collections["recetas"].retrieve()
-        print(" Colección ya existe.")
+        print("La colección ya existe. Eliminando para recrear...")
+        client.collections["recetas"].delete()
     except typesense.exceptions.ObjectNotFound:
-        print(" Creando colección 'recetas'...")
-        client.collections.create(schema)
+        print("La colección no existe. Se creará una nueva...")
+
+    print("Creando colección 'recetas'...")
+    client.collections.create(schema)
+
 
 # Leer recetas desde archivo JSON
 def cargar_recetas_desde_json(path=os.path.join(os.path.dirname(__file__), "recetas.json")):
@@ -193,6 +200,56 @@ def buscar_por_titulo():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+@app.route("/api/v1/ingredientes_agrupados", methods=["GET"])
+def obtener_ingredientes_agrupados():
+    try:
+        granos = set()
+        frutas_verduras = set()
+        proteinas = set()
+        lacteos_otros = set()
+
+        page = 1
+        while True:
+            resultados = client.collections["recetas"].documents.search({
+                "q": "*",
+                "query_by": "titulo",
+                "per_page": 250,
+                "page": page
+            })
+
+            hits = resultados["hits"]
+            if not hits:
+                break
+
+            for hit in hits:
+                doc = hit["document"]
+                ingredientes = doc.get("ingredientes_solo", [])
+                posiciones = doc.get("posicion_ingredientes", [])
+
+                for ingrediente, pos in zip(ingredientes, posiciones):
+                    ingrediente = ingrediente.strip().lower()
+                    if pos == 1:
+                        granos.add(ingrediente)
+                    elif pos == 2:
+                        frutas_verduras.add(ingrediente)
+                    elif pos == 3:
+                        proteinas.add(ingrediente)
+                    elif pos == 4:
+                        lacteos_otros.add(ingrediente)
+
+            page += 1
+
+        return jsonify({
+            "granos": sorted(list(granos)),
+            "frutas_verduras": sorted(list(frutas_verduras)),
+            "proteinas": sorted(list(proteinas)),
+            "lacteos_otros": sorted(list(lacteos_otros))
+        })
+
+    except Exception as e:
+        print(f"Error en /api/v1/ingredientes_agrupados: {e}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8090,debug=True)
+    app.run(host="0.0.0.0", port=8090, debug=True)
