@@ -6,3 +6,17 @@
     justify-content: center;
     padding: 20px;
 }
+
+h1{
+    font-family: 'Georgia', serif;
+    font-size: 48px;
+    font-weight: bold;
+    color: #004d00; /* Verde oscuro para contrastar con el fondo */
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.6);
+    margin: 40px 0 20px;
+    padding: 10px 20px;
+    border-bottom: 3px solid #30b930; /* Línea decorativa inferior */
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}

@@ -66,7 +66,7 @@ function SearchWeb() {
                 <div className="content">
                     <div className="gradient-separator" style={{ height: '220px' }}>
 
-                    <h1 onClick={Home}>Plataforma de Recetas</h1>
+                    <h1 onClick={Home}>Recetas del Toto del oeste</h1>
                     <Filter />
                     <Filter2
                         onFilter={aplicarFiltros}

@@ -15,8 +15,8 @@ function ResultPage(){
     return (
         <>
         <div className="page-container">
-            <h1>Plataforma de recetas</h1>
             <div className="content">
+                <h1 onClick={Home}>Recetas del Toto del oeste</h1>
                 <ResultInfo />
             </div>
             <Footer />

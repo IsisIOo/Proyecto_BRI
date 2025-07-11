@@ -10,7 +10,7 @@ function Home() {
             <div className="content">
                 <div className="gradient-separator">
                     <br />
-                    <h1>Plataforma de Recetas</h1>
+                    <h1>Recetas del Toto del oeste</h1>
                     <Filter />
                 </div>
                 <Plate />
