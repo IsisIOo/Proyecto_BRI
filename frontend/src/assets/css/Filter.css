@@ -6,19 +6,25 @@
 
 .button {
     border-radius: 20px;
-    width: 100px;
+    width: 110px;
+    padding: 10px 0;
     background-color: #004d00; /* verde oscuro */
     color: white;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s ease;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .button:hover {
-    background-color: #006600; /* verde un poco más claro */
+    background-color: #006600; /* verde más claro */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
 }
 
 .button:active {
-    background-color: #30b930; /* verde más oscuro */
-    transform: scale(0.96);     /* efecto visual de "hundimiento" */
+    background-color: #30b930; /* verde más vibrante */
+    transform: scale(0.96);     /* efecto de hundimiento */
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
 }

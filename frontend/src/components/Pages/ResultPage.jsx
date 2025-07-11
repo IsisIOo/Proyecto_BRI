@@ -15,6 +15,7 @@ function ResultPage(){
     return (
         <>
         <div className="page-container">
+            <h1>Plataforma de recetas</h1>
             <div className="content">
                 <ResultInfo />
             </div>

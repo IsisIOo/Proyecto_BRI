@@ -133,7 +133,7 @@ function Plate() {
                             width="200"
                             height="200"
                             className={`sector-overlay ${activeSector === 'up_left' ? 'active' : ''}`}
-                            onClick={() => handleSectorClick('Granos y derivados', upLeft, 'left', 'up_left')}
+                            onClick={() => handleSectorClick('Granos y derivados', upLeft, 'right', 'up_left')}
                         />
                         <rect
                             x="200"
@@ -149,7 +149,7 @@ function Plate() {
                             width="200"
                             height="200"
                             className={`sector-overlay ${activeSector === 'down_left' ? 'active' : ''}`}
-                            onClick={() => handleSectorClick('Proteínas', downLeft, 'left', 'down_left')}
+                            onClick={() => handleSectorClick('Proteínas', downLeft, 'right', 'down_left')}
                         />
                         <rect
                             x="200"
@@ -202,7 +202,7 @@ function Plate() {
             </div>
 
             {/*Botón que hace la búsqueda por ingredientes*/}
-            <button onClick={buscarRecetaIngrediente} className="receta-button">Buscar Receta</button>
+            <button onClick={buscarRecetaIngrediente} className="receta-button">Recetas por ingredientes</button>
 
         </>
 
