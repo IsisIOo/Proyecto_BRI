@@ -30,7 +30,7 @@ function Filter() {
             <input
                 className="form-control me-2"
                 type="search"
-                placeholder="Buscar recerta por título..."
+                placeholder="Buscar receta por título..."
                 aria-label="Buscar"
                 value={buscar}
                 onChange={(e) => setBuscar(e.target.value)}

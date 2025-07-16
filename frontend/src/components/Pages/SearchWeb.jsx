@@ -6,31 +6,31 @@ import Footer from "../Footer.jsx";
 import '../../assets/css/SeachWeb.css';
 import { useState, useEffect, useMemo } from "react";
 
-/*
-* Componente que muestra la página de busquedas intermedias, en donde puedes aplicar más filtros antes de elegir la
-* receta que finalmente vez
-* */
 function SearchWeb() {
-
-    /* Para moverse a otra página y recuperar la información de recetas estaticas*/
     const navigate = useNavigate();
     const location = useLocation();
-    const recetas = location.state || [];
 
-    // Estado para recetas filtradas
-    const [recetasFiltradas, setRecetasFiltradas] = useState(recetas);
+    // Extraemos las 3 categorías si vienen desde el backend
+    const { exactos = [], con_mas = [], parciales = [] } = location.state || {};
 
     const Home = () => {
         navigate('/');
     };
 
-    // Calcular las opciones únicas para cada filtro
+    // Combina todas las recetas para aplicar los filtros
+    const todasLasRecetas = [...exactos, ...con_mas, ...parciales];
+
+    // Estado para recetas filtradas por categoría
+    const [filtradasExactas, setFiltradasExactas] = useState(exactos);
+    const [filtradasConMas, setFiltradasConMas] = useState(con_mas);
+    const [filtradasParciales, setFiltradasParciales] = useState(parciales);
+
     const opcionesFiltro = useMemo(() => {
         const platos = new Set();
         const dietas = new Set();
         const cocinas = new Set();
 
-        recetas.forEach(receta => {
+        todasLasRecetas.forEach(receta => {
             if (receta.tipoPlato) platos.add(receta.tipoPlato);
             if (receta.dieta) dietas.add(receta.dieta);
             if (receta.tipoCocina) cocinas.add(receta.tipoCocina);
@@ -41,47 +41,90 @@ function SearchWeb() {
             dietas: Array.from(dietas),
             cocinas: Array.from(cocinas)
         };
-    }, [recetas]);
-
+    }, [todasLasRecetas]);
 
     const aplicarFiltros = ({ plato, dieta, cocina }) => {
-        const filtradas = recetas.filter((receta) => {
-            const coincidePlato = plato === '' || receta.tipoPlato === plato;
-            const coincideDieta = dieta === '' || receta.dieta === dieta;
-            const coincideCocina = cocina === '' || receta.tipoCocina === cocina;
-            return coincidePlato && coincideDieta && coincideCocina;
-        });
+        const filtrar = (lista) => {
+            return lista.filter((receta) => {
+                const coincidePlato = plato === '' || receta.tipoPlato === plato;
+                const coincideDieta = dieta === '' || receta.dieta === dieta;
+                const coincideCocina = cocina === '' || receta.tipoCocina === cocina;
+                return coincidePlato && coincideDieta && coincideCocina;
+            });
+        };
 
-        setRecetasFiltradas(filtradas);
+        setFiltradasExactas(filtrar(exactos));
+        setFiltradasConMas(filtrar(con_mas));
+        setFiltradasParciales(filtrar(parciales));
     };
 
-    // Cambiar la lista original de recetas para que aparezcan las recetas con los filtros
     useEffect(() => {
-        setRecetasFiltradas(recetas);
-    }, [recetas]);
+        // Inicializa los resultados si cambian
+        setFiltradasExactas(exactos);
+        setFiltradasConMas(con_mas);
+        setFiltradasParciales(parciales);
+    }, [exactos, con_mas, parciales]);
 
     return (
         <>  
             <div className="page-container">
                 <div className="content">
-                    <div className="gradient-separator" style={{ height: '220px' }}>
-
-                    <h1 onClick={Home}>Recetas del Toto del oeste</h1>
-                    <Filter />
-                    <Filter2
-                        onFilter={aplicarFiltros}
-                        opcionesPlato={opcionesFiltro.platos}
-                        opcionesDieta={opcionesFiltro.dietas}
-                        opcionesCocina={opcionesFiltro.cocinas}
-                    />
+                    <div className="gradient-separator" style={{ height: '220px', padding: '10px'}}>
+                        <h1 onClick={Home}>Recetas del Toto del Oeste</h1>
+                        <Filter />
+                        <Filter2
+                            onFilter={aplicarFiltros}
+                            opcionesPlato={opcionesFiltro.platos}
+                            opcionesDieta={opcionesFiltro.dietas}
+                            opcionesCocina={opcionesFiltro.cocinas}
+                        />
                     </div>
-                    <div className="recipe-grid">
-                        {recetasFiltradas.length > 0 ? (
-                            recetasFiltradas.map((receta, index) => (
-                                <RecipeCard key={index} receta={receta} />
-                            ))
+
+                    {/* Recetas exactas */}
+                    <div className="recipe-section" style={{ paddingTop: '35px'}}>
+                        {filtradasExactas.length > 0 ? (
+                            <div>
+                                <h6><strong>Recetas con los ingredientes exactos:</strong></h6>
+                                <div className="recipe-grid">
+                                    {filtradasExactas.map((receta, index) => (
+                                        <RecipeCard key={`e-${index}`} receta={receta} />
+                                    ))}
+                                </div>
+                            </div>
                         ) : (
-                            <p>No se encontraron recetas.</p>
+                            <h6><strong>Recetas con los ingredientes exactos: </strong>No hay recetas exactas.</h6>
+                        )}
+                    </div>
+
+                    {/* Recetas con más ingredientes */}
+                    <div className="recipe-section" style={{ paddingTop: '25px'}}>
+                        {filtradasConMas.length > 0 ? (
+                            <div>
+                                <h6><strong>Recetas con los ingredientes seleccionados y otros más:</strong></h6>
+                                <div className="recipe-grid">
+                                    {filtradasConMas.map((receta, index) => (
+                                        <RecipeCard key={`m-${index}`} receta={receta} />
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <h6><strong>Recetas con los ingredientes seleccionados y otros más: </strong>No hay recetas con ingredientes adicionales.</h6>
+                        )}
+                    </div>
+
+                    {/* Recetas parciales */}
+                    <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                        {filtradasParciales.length > 0 ? (
+                            <div>
+                                <h6><strong>Recetas con algunos de los ingredientes: </strong></h6>
+                                <div className="recipe-grid">
+                                    {filtradasParciales.map((receta, index) => (
+                                        <RecipeCard key={`p-${index}`} receta={receta} />
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <h6><strong>Recetas con algunos de los ingredientes: </strong>No hay recetas parciales.</h6>
                         )}
                     </div>
                 </div>

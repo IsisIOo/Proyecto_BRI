@@ -32,6 +32,7 @@ function Plate() {
     };
 
     /*Para traer las recetas por ingredientes, por ahora es estatico*/
+    /*
     const buscarRecetaIngrediente = async () => {
         try {
             await recetas.cargarRecetas(); // Carga las recetas al iniciar
@@ -56,6 +57,24 @@ function Plate() {
             alert("No se pudieron obtener recetas del backend.");
         }
     };
+    */
+
+    const buscarRecetaIngrediente = async () => {
+        try {
+            await recetas.cargarRecetas(); // Carga las recetas al iniciar
+
+            const response = await recetas.buscarRecetasPorIngredientesAvanzado(ingredientesFinales);
+            const data = response.data;
+
+            // Enviamos todos los grupos juntos
+            navigate('/search', { state: data });
+
+        } catch (error) {
+            console.error("Error al buscar recetas por ingredientes:", error);
+            alert("No se pudieron obtener recetas del backend.");
+        }
+    };
+
 
 
     /* Controles del modal */

@@ -16,7 +16,7 @@ function ResultPage(){
         <>
         <div className="page-container">
             <div className="content">
-                <h1 onClick={Home}>Recetas del Toto del oeste</h1>
+                <h1 onClick={Home}>Recetas del Toto del Oeste</h1>
                 <ResultInfo />
             </div>
             <Footer />

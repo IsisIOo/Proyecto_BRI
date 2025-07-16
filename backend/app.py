@@ -201,6 +201,47 @@ def buscar_por_titulo():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/v1/buscar_por_ingredientes", methods=["GET"])
+def buscar_por_ingredientes():
+    ingredientes = request.args.getlist("ingrediente")
+
+    if not ingredientes:
+        return jsonify({"error": "Debe proporcionar al menos un ingrediente."}), 400
+
+    ingredientes_set = set(map(str.lower, ingredientes))
+
+    try:
+        resultados = client.collections["recetas"].documents.search({
+            "q": " ".join(ingredientes),
+            "query_by": "ingredientes",
+            "per_page": 250  # ajusta según sea necesario
+        })
+
+        exactos = []
+        superset = []
+        parciales = []
+
+        for hit in resultados["hits"]:
+            doc = hit["document"]
+            receta_ingredientes = set(map(str.lower, doc.get("ingredientes_solo", [])))
+
+            if receta_ingredientes == ingredientes_set:
+                exactos.append(doc)
+            elif ingredientes_set.issubset(receta_ingredientes):
+                superset.append(doc)
+            elif receta_ingredientes & ingredientes_set:
+                parciales.append(doc)
+
+        return jsonify({
+            "exactos": exactos, # recetas con los ingredientes exactos
+            "con_mas": superset, # recetas con los ingredientes y más
+            "parciales": parciales # recetas con alguno de los ingredientes
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/v1/ingredientes_agrupados", methods=["GET"])
 def obtener_ingredientes_agrupados():
     try:

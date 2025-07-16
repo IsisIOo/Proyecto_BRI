@@ -27,6 +27,14 @@ const buscarRecetasPorIngredientes = (ingredientes) => {
     });
 }
 
+
+const buscarRecetasPorIngredientesAvanzado = (ingredientes) => {
+    return httpClient.get("/api/v1/buscar_por_ingredientes", {
+        params: { ingrediente: ingredientes },
+        paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
+    });
+};
+
 const buscarRecetasPorTitulo = (titulo) => {
     return httpClient.get("/api/v1/buscar_por_titulo", {
         params: { titulo }
@@ -47,6 +55,7 @@ const obtenerIngredientesAgrupados = () => {
 export default {
     buscarTodasLasRecetas,
     buscarRecetasPorIngredientes,
+    buscarRecetasPorIngredientesAvanzado,
     buscarRecetasPorTitulo,
     cargarRecetas,
     obtenerIngredientesAgrupados
