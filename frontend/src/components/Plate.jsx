@@ -5,9 +5,13 @@ import Modal from './Modal';
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import recetas from "../services/recetas";
+import { useLocation } from "react-router-dom";
 
 
 function Plate() {
+
+    const location = useLocation();
+    const ingredientesDesdeBusqueda = location.state?.ingredientesSeleccionados || [];
 
     /*Esto es para modificar la posición del cuadro de Ingredientes seleccionados*/
     const getOppositePositionClass = (position) => {
@@ -19,7 +23,8 @@ function Plate() {
     const navigate = useNavigate(); // navegar
 
     /*Para guardar los ingredientes elegidos*/
-    const [ingredientesFinales, setIngredientesFinales] = useState([]);
+    const [ingredientesFinales, setIngredientesFinales] = useState(ingredientesDesdeBusqueda);
+
 
     /*Para manejar la selección*/
     const agregarIngredientesSeleccionados = (seleccionados) => {
@@ -31,43 +36,19 @@ function Plate() {
         setIngredientesFinales(prev => prev.filter(item => item !== nombre));
     };
 
-    /*Para traer las recetas por ingredientes, por ahora es estatico*/
-    /*
     const buscarRecetaIngrediente = async () => {
         try {
-            await recetas.cargarRecetas(); // Carga las recetas al iniciar
-
-            let response;
-
-            // Si no hay ingredientes, hacer búsqueda general con ?q=*
-            if (!ingredientesFinales || ingredientesFinales.length === 0) {
-                response = await recetas.buscarTodasLasRecetas("*");
-            } else {
-                // Buscar por múltiples ingredientes
-                response = await recetas.buscarRecetasPorIngredientes(ingredientesFinales);
-            }
-
-            const recetasDesdeBackend = response.data;
-
-            // Redirigir a la página de búsqueda con las recetas como estado
-            navigate('/search', { state: recetasDesdeBackend });
-
-        } catch (error) {
-            console.error("Error al buscar recetas por ingredientes:", error);
-            alert("No se pudieron obtener recetas del backend.");
-        }
-    };
-    */
-
-    const buscarRecetaIngrediente = async () => {
-        try {
-            await recetas.cargarRecetas(); // Carga las recetas al iniciar
+            await recetas.cargarRecetas();
 
             const response = await recetas.buscarRecetasPorIngredientesAvanzado(ingredientesFinales);
             const data = response.data;
 
-            // Enviamos todos los grupos juntos
-            navigate('/search', { state: data });
+            navigate('/search', {
+                state: {
+                    ...data,
+                    ingredientesSeleccionados: ingredientesFinales 
+                }
+            });
 
         } catch (error) {
             console.error("Error al buscar recetas por ingredientes:", error);
@@ -182,27 +163,31 @@ function Plate() {
                 </svg>
 
                 {/*Se muestra la carta de ingredientes seleccionados*/}
-                <div className={`ingredientes-finales card shadow ${getOppositePositionClass(modalData.position)}`}>
-                    <div className="card-body">
-                        <h5 className="card-title">Ingredientes seleccionados</h5>
-                        {ingredientesFinales.length === 0 ? (
-                            <p className="text-muted">No tienes ingredientes seleccionados</p>
-                        ) : (
-                            <ul className="list-group list-group-flush ingredientes-scroll">
-                                {ingredientesFinales.map((item, index) => (
-                                    <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                        {item}
-                                        <button
-                                            className="btn btn-sm btn-outline-danger"
-                                            onClick={() => eliminarIngrediente(item)}
-                                        >
-                                            ✕
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
+                <div>
+                    <div className={`ingredientes-finales card shadow ${getOppositePositionClass(modalData.position)}`}>
+                        <div className="card-body">
+                            <h5 className="card-title">Ingredientes seleccionados</h5>
+                            {ingredientesFinales.length === 0 ? (
+                                <p className="text-muted">No tienes ingredientes seleccionados</p>
+                            ) : (
+                                <ul className="list-group list-group-flush ingredientes-scroll">
+                                    {ingredientesFinales.map((item, index) => (
+                                        <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                                            {item}
+                                            <button
+                                                className="btn btn-sm btn-outline-danger"
+                                                onClick={() => eliminarIngrediente(item)}
+                                            >
+                                                ✕
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                        <button onClick={buscarRecetaIngrediente} className="receta-button">Buscar recetas por ingredientes</button>
                     </div>
+                    
                 </div>
 
                 {/*Para controlar el contenido del modal una vez abierto*/}
@@ -216,12 +201,14 @@ function Plate() {
                             setActiveSector(null);
                         }}
                         onSelect={agregarIngredientesSeleccionados}
+                        seleccionadosGlobales={ingredientesFinales} 
+                        onRemoveIngrediente={eliminarIngrediente}  
                     />
                 )}
             </div>
 
             {/*Botón que hace la búsqueda por ingredientes*/}
-            <button onClick={buscarRecetaIngrediente} className="receta-button">Recetas por ingredientes</button>
+            
 
         </>
 

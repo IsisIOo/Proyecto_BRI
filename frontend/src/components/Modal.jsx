@@ -6,7 +6,8 @@ import Fuse from 'fuse.js';
 /*
 * Componente que muestra el modal de ingredientes por elegir
 * */
-function Modal({ title, content, onClose, onSelect, position = 'center' }) {
+function Modal({ title, content, onClose, onSelect, position = 'center', seleccionadosGlobales = [], onRemoveIngrediente }) {
+
 
     /* Para indicar la posición del modal*/
     const positionClass =
@@ -30,17 +31,31 @@ function Modal({ title, content, onClose, onSelect, position = 'center' }) {
 
     /*Inicializa los ingredientes seleccionados como vacio*/
     useEffect(() => {
-        setSelecciones(content.map(item => ({ nombre: item, seleccionado: false })));
-    }, [content]);
+        setSelecciones(content.map(item => ({
+            nombre: item,
+            seleccionado: seleccionadosGlobales.includes(item) // Si ya estaba seleccionado, marcar
+        })));
+    }, [content, seleccionadosGlobales]);
+
+
 
     /*Para seleccionar ingredientes*/
     const toggleSeleccion = (nombre) => {
-        setSelecciones(prev =>
-            prev.map(item =>
+        setSelecciones(prev => {
+            const nuevoEstado = prev.map(item =>
                 item.nombre === nombre ? { ...item, seleccionado: !item.seleccionado } : item
-            )
-        );
+            );
+
+            // Si estaba seleccionado y lo desmarcó, lo quitamos globalmente
+            const fueSeleccionado = prev.find(item => item.nombre === nombre)?.seleccionado;
+            if (fueSeleccionado) {
+                onRemoveIngrediente(nombre);
+            }
+
+            return nuevoEstado;
+        });
     };
+
 
     /*Para confirmar la selección de ingredientes*/
     const confirmarSeleccion = () => {

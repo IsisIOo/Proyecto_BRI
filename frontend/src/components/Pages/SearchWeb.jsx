@@ -11,7 +11,13 @@ function SearchWeb() {
     const location = useLocation();
 
     // Extraemos las 3 categorías si vienen desde el backend
-    const { exactos = [], con_mas = [], parciales = [] } = location.state || {};
+    
+    const {
+    exactos = [],
+    con_mas = [],
+    parciales = [],
+    ingredientesSeleccionados = []  // para mantener los ingredientes seleccionados en la página de resultados
+    } = location.state || {};
 
     const Home = () => {
         navigate('/');
@@ -80,8 +86,33 @@ function SearchWeb() {
                         />
                     </div>
 
+                    <div className="ingredientes-seleccionados-bar" style={{ paddingTop: '35px'}}>
+                        <span className="ingredientes-label">Ingredientes seleccionados:</span>
+
+                        {ingredientesSeleccionados.length > 0 ? (
+                            <div className="ingredientes-scroll-container">
+                                <ul className="ingredientes-lista">
+                                    {ingredientesSeleccionados.map((ing, i) => (
+                                        <li key={i} className="ingrediente-item">{ing}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ) : (
+                            <span className="sin-ingredientes">No se seleccionaron ingredientes.</span>
+                        )}
+
+                        <button
+                            className="editar-ingredientes-btn"
+                            onClick={() => navigate('/', { state: { ingredientesSeleccionados } })}
+                        >
+                            Editar ingredientes
+                        </button>
+                    </div>
+
+
+
                     {/* Recetas exactas */}
-                    <div className="recipe-section" style={{ paddingTop: '35px'}}>
+                    <div className="recipe-section" style={{ paddingTop: '25px'}}>
                         {filtradasExactas.length > 0 ? (
                             <div>
                                 <h6><strong>Recetas con los ingredientes exactos:</strong></h6>
