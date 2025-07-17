@@ -4,13 +4,16 @@
 # librerias a instalar: pip install flask typesense
 
 # Configuración de Typesense
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 import typesense
 import json
 import os
 
 # Crear una instancia de la aplicación Flask
 app = Flask(__name__)
+
+CORS(app)   # Esto habilita CORS para todas las rutas y orígenes
 
 # Configuración del cliente de Typesense para conexión con el motor de búsqueda
 client = typesense.Client({
