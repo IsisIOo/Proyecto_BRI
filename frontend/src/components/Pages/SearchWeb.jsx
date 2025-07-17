@@ -6,6 +6,9 @@ import Footer from "../Footer.jsx";
 import '../../assets/css/SeachWeb.css';
 import { useState, useEffect, useMemo } from "react";
 
+import IngredientesBox from "../IngredientesBox.jsx";
+
+
 function SearchWeb() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -106,99 +109,84 @@ function SearchWeb() {
                         />
                     </div>
 
-                    <div className="ingredientes-seleccionados-bar" style={{ paddingTop: '35px'}}>
-                        <h5 className="ingredientes-label">Ingredientes seleccionados:</h5>
-
-                        {ingredientesSeleccionados.length > 0 ? (
-                            <div className="ingredientes-scroll-container">
-                                <ul className="ingredientes-lista">
-                                    {ingredientesSeleccionados.map((ing, i) => (
-                                        <li
-                                            key={i}
-                                            className={`ingrediente-item ${ingredientesEnResultados.has(ing.toLowerCase()) ? 'presente' : 'ausente'}`}
-                                            >
-                                            {ing}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ) : (
-                            <span className="sin-ingredientes">No se seleccionaron ingredientes.</span>
-                        )}
-
-                        <button
-                            className="editar-ingredientes-btn"
-                            onClick={() => navigate('/', { state: { ingredientesSeleccionados } })}
-                        >
-                            Editar ingredientes
-                        </button>
-                    </div>
-
-
-
-                    {/* Recetas exactas */}
-                    <div className="recipe-section" style={{ paddingTop: '25px'}}>
-                        {filtradasExactas.length > 0 ? (
-                            <div>
-                                <h6><strong>Recetas con los ingredientes exactos:</strong></h6>
-                                <div className="recipe-grid">
-                                    {filtradasExactas.map((receta, index) => (
-                                        <RecipeCard key={`e-${index}`} receta={receta} />
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <h6><strong>Recetas con los ingredientes exactos: </strong>No hay recetas exactas.</h6>
-                        )}
-                    </div>
-
-                    {/* Recetas con más ingredientes */}
-                    <div className="recipe-section" style={{ paddingTop: '25px'}}>
-                        {filtradasConMas.length > 0 ? (
-                            <div>
-                                <h6><strong>Recetas con los ingredientes seleccionados y otros más:</strong></h6>
-                                <div className="recipe-grid">
-                                    {filtradasConMas.map((receta, index) => (
-                                        <RecipeCard key={`m-${index}`} receta={receta} />
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <h6><strong>Recetas con los ingredientes seleccionados y otros más: </strong>No hay recetas con ingredientes adicionales.</h6>
-                        )}
-                    </div>
-
-                    {/* Recetas parciales */}
-                    <div className="recipe-section" style={{ paddingTop: '25px' }}>
-                        {filtradasParciales.length > 0 ? (
-                            <div>
-                                <h6><strong>Recetas con algunos de los ingredientes: </strong></h6>
-                                <div className="recipe-grid">
-                                    {filtradasParciales.map((receta, index) => (
-                                        <RecipeCard key={`p-${index}`} receta={receta} />
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <h6><strong>Recetas con algunos de los ingredientes: </strong>No hay recetas parciales.</h6>
-                        )}
-                    </div>
-
-                    {/* Recetas con solo uno de los ingredientes */}
-                    <div className="recipe-section" style={{ paddingTop: '25px' }}>
-                    {filtradasSoloUno.length > 0 ? (
-                        <div>
-                        <h6><strong>Recetas con solo uno de los ingredientes:</strong></h6>
-                        <div className="recipe-grid">
-                            {filtradasSoloUno.map((receta, index) => (
-                            <RecipeCard key={`s-${index}`} receta={receta} />
-                            ))}
+                    <div className="resultados-layout" style={{ display: 'flex', marginTop: '20px' }}>
+                        {/* Columna izquierda: ingredientes seleccionados */}
+                        <div style={{ flex: '1', maxWidth: '300px' }}>
+                            <IngredientesBox
+                                ingredientes={ingredientesSeleccionados}
+                                onEditar={() => navigate('/', { state: { ingredientesSeleccionados } })}
+                            />
                         </div>
+
+                        {/* Columna derecha: recetas */}
+                        <div style={{ flex: 2, marginLeft: '20px' }} className="recetas-container">
+                            {/* Recetas exactas */}
+                            <div className="recipe-section" style={{ paddingTop: '10px' }}>
+                                {filtradasExactas.length > 0 ? (
+                                    <div>
+                                        <h6><strong>Recetas con los ingredientes exactos:</strong></h6>
+                                        <div className="recipe-grid">
+                                            {filtradasExactas.map((receta, index) => (
+                                                <RecipeCard key={`e-${index}`} receta={receta} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <h6><strong>Recetas con los ingredientes exactos: </strong>No hay recetas exactas.</h6>
+                                )}
+                            </div>
+
+                            {/* Recetas con más ingredientes */}
+                            <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                                {filtradasConMas.length > 0 ? (
+                                    <div>
+                                        <h6><strong>Recetas con los ingredientes seleccionados y otros más:</strong></h6>
+                                        <div className="recipe-grid">
+                                            {filtradasConMas.map((receta, index) => (
+                                                <RecipeCard key={`m-${index}`} receta={receta} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <h6><strong>Recetas con los ingredientes seleccionados y otros más: </strong>No hay recetas con ingredientes adicionales.</h6>
+                                )}
+                            </div>
+
+                            {/* Recetas parciales */}
+                            <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                                {filtradasParciales.length > 0 ? (
+                                    <div>
+                                        <h6><strong>Recetas con algunos de los ingredientes:</strong></h6>
+                                        <div className="recipe-grid">
+                                            {filtradasParciales.map((receta, index) => (
+                                                <RecipeCard key={`p-${index}`} receta={receta} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <h6><strong>Recetas con algunos de los ingredientes: </strong>No hay recetas parciales.</h6>
+                                )}
+                            </div>
+
+                            {/* Recetas con solo uno de los ingredientes */}
+                            <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                            {filtradasSoloUno.length > 0 ? (
+                                <div>
+                                <h6><strong>Recetas con solo uno de los ingredientes:</strong></h6>
+                                <div className="recipe-grid">
+                                    {filtradasSoloUno.map((receta, index) => (
+                                    <RecipeCard key={`s-${index}`} receta={receta} />
+                                    ))}
+                                </div>
+                                </div>
+                            ) : (
+                                <h6><strong>Recetas con solo uno de los ingredientes:</strong> No hay recetas con un solo ingrediente.</h6>
+                            )}
+                            </div>
                         </div>
-                    ) : (
-                        <h6><strong>Recetas con solo uno de los ingredientes:</strong> No hay recetas con un solo ingrediente.</h6>
-                    )}
                     </div>
+
+
                 </div>
                 <Footer />
             </div>

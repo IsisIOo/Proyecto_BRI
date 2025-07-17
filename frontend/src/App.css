@@ -114,3 +114,43 @@
     flex-grow: 1;
     color: gray;
 }
+
+.ingredientes-box {
+    width: 100%;
+    max-width: 300px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin: 0 auto;  /* Esto  centra horizontalmente en su contenedor */
+}
+
+
+.ingredientes-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+
+.resultados-layout {
+    display: flex;
+    justify-content: center;         /* Centra horizontalmente ambas columnas */
+    align-items: flex-start;         /* Alinea arriba verticalmente */
+    min-height: calc(100vh - 220px); /* Altura mínima según header */
+    padding: 20px 40px;
+    box-sizing: border-box;
+    gap: 40px;
+}
+
+
+
+/* limitar el ancho para evitar que quede demasiado estirado */
+.resultados-layout > div {
+    flex: 1;
+}
+
+.recetas-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
