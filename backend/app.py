@@ -211,35 +211,69 @@ def buscar_por_ingredientes():
     ingredientes_set = set(map(str.lower, ingredientes))
 
     try:
+        # 1. Buscar recetas con todos los ingredientes juntos
         resultados = client.collections["recetas"].documents.search({
             "q": " ".join(ingredientes),
             "query_by": "ingredientes",
-            "per_page": 250  # ajusta según sea necesario
+            "per_page": 250
         })
 
         exactos = []
         superset = []
         parciales = []
+        ya_agregadas = set()
 
         for hit in resultados["hits"]:
             doc = hit["document"]
             receta_ingredientes = set(map(str.lower, doc.get("ingredientes_solo", [])))
+            receta_id = doc.get("id")
+
+            if receta_id in ya_agregadas:
+                continue
+
+            interseccion = receta_ingredientes & ingredientes_set
 
             if receta_ingredientes == ingredientes_set:
                 exactos.append(doc)
             elif ingredientes_set.issubset(receta_ingredientes):
                 superset.append(doc)
-            elif receta_ingredientes & ingredientes_set:
+            elif len(interseccion) > 1:
                 parciales.append(doc)
 
+            ya_agregadas.add(receta_id)
+
+        # 2. Buscar recetas con solo uno de los ingredientes, individualmente
+        solo_uno = []
+        for ing in ingredientes_set:
+            resultado_individual = client.collections["recetas"].documents.search({
+                "q": ing,
+                "query_by": "ingredientes",
+                "per_page": 100  # ajustable
+            })
+
+            for hit in resultado_individual["hits"]:
+                doc = hit["document"]
+                receta_id = doc.get("id")
+
+                if receta_id not in ya_agregadas:
+                    receta_ingredientes = set(map(str.lower, doc.get("ingredientes_solo", [])))
+                    if ing in receta_ingredientes:
+                        solo_uno.append(doc)
+                        ya_agregadas.add(receta_id)
+
         return jsonify({
-            "exactos": exactos, # recetas con los ingredientes exactos
-            "con_mas": superset, # recetas con los ingredientes y más
-            "parciales": parciales # recetas con alguno de los ingredientes
+            "exactos": exactos,
+            "con_mas": superset,
+            "parciales": parciales,
+            "solo_uno": solo_uno
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+    
+    
+
 
 
 @app.route("/api/v1/ingredientes_agrupados", methods=["GET"])

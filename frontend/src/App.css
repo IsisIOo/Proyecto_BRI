@@ -79,11 +79,22 @@
 }
 
 .ingrediente-item {
-    background-color: #f1f1f1;
-    border-radius: 5px;
-    padding: 5px 10px;
-    white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #333;
+  font-weight: bold;
 }
+
+.ingrediente-item.presente {
+  background-color: #d4f4d4; /* verde suave */
+  border: 1px solid #5cb85c;
+}
+
+.ingrediente-item.ausente {
+  background-color: #d4f4d4; /* gris claro */
+  border: 1px solid #5cb85c;
+}
+
 
 .editar-ingredientes-btn {
     white-space: nowrap;

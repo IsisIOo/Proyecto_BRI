@@ -7,21 +7,28 @@ function Filter() {
     const [buscar, setBuscar] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault(); // Evita que se recargue la página
-
+    const buscarPorTitulo = async () => {
         try {
-            // Busca recetas por título
             const response = await recetas.buscarRecetasPorTitulo(buscar);
-
             const resultados = response.data;
 
-            // Redirige a /search con los resultados
-            navigate('/search', { state: resultados });
+            navigate('/search-title', {
+                state: {
+                    titulo: buscar,
+                    resultados
+                }
+            });
 
         } catch (error) {
-            console.error("Error al buscar por título:", error);
-            alert("Error al buscar recetas. Intenta nuevamente.");
+            console.error("Error al buscar receta por título:", error);
+            alert("No se pudieron obtener resultados de la búsqueda.");
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (buscar.trim() !== '') {
+            buscarPorTitulo();
         }
     };
 

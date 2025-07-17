@@ -13,11 +13,13 @@ function SearchWeb() {
     // Extraemos las 3 categorías si vienen desde el backend
     
     const {
-    exactos = [],
-    con_mas = [],
-    parciales = [],
-    ingredientesSeleccionados = []  // para mantener los ingredientes seleccionados en la página de resultados
+        exactos = [],
+        con_mas = [],
+        parciales = [],
+        solo_uno = [],
+        ingredientesSeleccionados = []
     } = location.state || {};
+
 
     const Home = () => {
         navigate('/');
@@ -30,6 +32,11 @@ function SearchWeb() {
     const [filtradasExactas, setFiltradasExactas] = useState(exactos);
     const [filtradasConMas, setFiltradasConMas] = useState(con_mas);
     const [filtradasParciales, setFiltradasParciales] = useState(parciales);
+    const [filtradasSoloUno, setFiltradasSoloUno] = useState(solo_uno);
+
+    const [recetasNoClasificadas, setRecetasNoClasificadas] = useState([]);
+
+
 
     const opcionesFiltro = useMemo(() => {
         const platos = new Set();
@@ -65,14 +72,27 @@ function SearchWeb() {
     };
 
     useEffect(() => {
-        // Inicializa los resultados si cambian
         setFiltradasExactas(exactos);
         setFiltradasConMas(con_mas);
         setFiltradasParciales(parciales);
-    }, [exactos, con_mas, parciales]);
+        setFiltradasSoloUno(solo_uno);
+    }, [exactos, con_mas, parciales, solo_uno, ingredientesSeleccionados]);
+
+
+
+    // Recolectar ingredientes presentes en todas las recetas filtradas
+    const ingredientesEnResultados = useMemo(() => {
+        const todos = [...filtradasExactas, ...filtradasConMas, ...filtradasParciales, ...filtradasSoloUno];
+        const conjunto = new Set();
+        todos.forEach(receta => {
+            receta.ingredientes_solo?.forEach(ing => conjunto.add(ing.toLowerCase()));
+        });
+        return conjunto;
+    }, [filtradasExactas, filtradasConMas, filtradasParciales, filtradasSoloUno]);
+
 
     return (
-        <>  
+
             <div className="page-container">
                 <div className="content">
                     <div className="gradient-separator" style={{ height: '220px', padding: '10px'}}>
@@ -87,13 +107,18 @@ function SearchWeb() {
                     </div>
 
                     <div className="ingredientes-seleccionados-bar" style={{ paddingTop: '35px'}}>
-                        <span className="ingredientes-label">Ingredientes seleccionados:</span>
+                        <h5 className="ingredientes-label">Ingredientes seleccionados:</h5>
 
                         {ingredientesSeleccionados.length > 0 ? (
                             <div className="ingredientes-scroll-container">
                                 <ul className="ingredientes-lista">
                                     {ingredientesSeleccionados.map((ing, i) => (
-                                        <li key={i} className="ingrediente-item">{ing}</li>
+                                        <li
+                                            key={i}
+                                            className={`ingrediente-item ${ingredientesEnResultados.has(ing.toLowerCase()) ? 'presente' : 'ausente'}`}
+                                            >
+                                            {ing}
+                                        </li>
                                     ))}
                                 </ul>
                             </div>
@@ -158,10 +183,26 @@ function SearchWeb() {
                             <h6><strong>Recetas con algunos de los ingredientes: </strong>No hay recetas parciales.</h6>
                         )}
                     </div>
+
+                    {/* Recetas con solo uno de los ingredientes */}
+                    <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                    {filtradasSoloUno.length > 0 ? (
+                        <div>
+                        <h6><strong>Recetas con solo uno de los ingredientes:</strong></h6>
+                        <div className="recipe-grid">
+                            {filtradasSoloUno.map((receta, index) => (
+                            <RecipeCard key={`s-${index}`} receta={receta} />
+                            ))}
+                        </div>
+                        </div>
+                    ) : (
+                        <h6><strong>Recetas con solo uno de los ingredientes:</strong> No hay recetas con un solo ingrediente.</h6>
+                    )}
+                    </div>
                 </div>
                 <Footer />
             </div>
-        </>
+
     );
 }
 
