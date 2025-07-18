@@ -111,17 +111,21 @@ function SearchWeb() {
                             opcionesDieta={opcionesFiltro.dietas}
                             opcionesCocina={opcionesFiltro.cocinas}
                         />
-                        <BackToHomeButton />
+                        
                     </div>
 
                     <div className="resultados-layout" style={{ display: 'flex', marginTop: '15px' }}>
-                        {/* Columna izquierda: ingredientes seleccionados */}
-                        <div style={{ flex: '1', maxWidth: '300px' }}>
+                        {/* Columna izquierda: botón + ingredientes seleccionados */}
+                        <div style={{ flex: '1', maxWidth: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <div style={{ marginBottom: '15px', alignSelf: 'stretch', display: 'flex', justifyContent: 'center' }}>
+                                <BackToHomeButton />
+                            </div>
                             <IngredientesBox
                                 ingredientes={ingredientesSeleccionados}
                                 onEditar={() => navigate('/', { state: { ingredientesSeleccionados } })}
                             />
                         </div>
+
 
                         {/* Columna derecha: recetas */}
                         <div style={{ flex: 2, marginLeft: '20px' }} className="recetas-container">
