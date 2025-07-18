@@ -7,31 +7,35 @@ import {useNavigate} from "react-router-dom";
 import recetas from "../services/recetas";
 import { useLocation } from "react-router-dom";
 
+/**
+ * Componente usado en la página principal (<Home />) para mostrar recetas sugeridas o destacadas.
+ */
 
 function Plate() {
-
     const location = useLocation();
+    // Recupera ingredientes si se viene desde otra página
     const ingredientesDesdeBusqueda = location.state?.ingredientesSeleccionados || [];
 
     /*Esto es para modificar la posición del cuadro de Ingredientes seleccionados*/
+    // Retorna la clase CSS opuesta para posicionar la caja de ingredientes
     const getOppositePositionClass = (position) => {
         if (position === 'left') return 'ingredientes-right';
         if (position === 'right') return 'ingredientes-left';
         return 'ingredientes-left'; // por defecto aparece a la izquierda
     };
 
-    const navigate = useNavigate(); // navegar
+    const navigate = useNavigate(); // para redirigir
 
     /*Para guardar los ingredientes elegidos*/
+    // Estado: ingredientes seleccionados por el usuario
     const [ingredientesFinales, setIngredientesFinales] = useState(
         ingredientesDesdeBusqueda.map(item =>
             typeof item === "string" ? { nombre: item, categoria: "Desconocida" } : item
         )
     );
 
-
-
     /*Para manejar la selección*/
+    // Agrega ingredientes seleccionados desde el modal
     const agregarIngredientesSeleccionados = (seleccionados, categoria) => {
         const nuevos = seleccionados.map(nombre => ({ nombre, categoria }));
         setIngredientesFinales(prev => {
@@ -42,25 +46,20 @@ function Plate() {
     };
 
 
-    /* Para eliminar ingredientes*/
+    /* Para eliminar ingredientes seleccionados*/
     const eliminarIngrediente = (ingrediente) => {
         const nombre = typeof ingrediente === 'string' ? ingrediente : ingrediente.nombre;
         setIngredientesFinales(prev => prev.filter(item => item.nombre !== nombre));
     };
-
-
+    // Busca recetas según los ingredientes seleccionados y navega a los resultados
     const buscarRecetaIngrediente = async () => {
         try {
-            await recetas.cargarRecetas();
-
-            // Extraer solo nombres
             const soloNombres = ingredientesFinales.map(item => item.nombre);
+            console.log("Ingredientes enviados al backend:", soloNombres); // log para frontend
 
             const response = await recetas.buscarRecetasPorIngredientesAvanzado(soloNombres);
-
             const data = response.data;
 
-            // objetos con nombre y categoría al navegar
             navigate('/search', {
                 state: {
                     ...data,
@@ -74,15 +73,14 @@ function Plate() {
         }
     };
 
-
-
-
     /* Controles del modal */
+    // estos son estados de control para el modal de selección de ingredientes
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState({ title: '', content: [] });
     const [activeSector, setActiveSector] = useState(null);
 
     /* Para abrir el modal */
+    // Abre el modal de una sección del plato
     const handleSectorClick = (title, content, position, sectorKey) => {
         if (activeSector === sectorKey) {
             // Si haces clic en el mismo sector, cierra el modal
@@ -100,7 +98,7 @@ function Plate() {
     };
 
     /* Listas de ingredientes, elegidos según la posición en el plato*/
-    /* Nota: Hay que ordenarlos por abededario*/
+    /* Nota: Se ordenan por abecedario*/
     const [upLeft, setUpLeft] = useState([]);
     const [upRight, setUpRight] = useState([]);
     const [downLeft, setDownLeft] = useState([]);
@@ -146,6 +144,7 @@ function Plate() {
                     <circle cx="200" cy="200" r="200" fill="url(#plateImage)" clipPath="url(#circleClip)" />
 
                     <g clipPath="url(#circleClip)">
+                        {/* Sectores clicables que abren el modal */}
                         <rect
                             x="0"
                             y="0"
@@ -208,6 +207,7 @@ function Plate() {
                                 </ul>
                             )}
                         </div>
+                        {/* Botón de búsqueda */}
                         <button onClick={buscarRecetaIngrediente} className="receta-button">Buscar recetas por ingredientes</button>
                     </div>
                     
@@ -229,10 +229,6 @@ function Plate() {
                     />
                 )}
             </div>
-
-            {/*Botón que hace la búsqueda por ingredientes*/}
-            
-
         </>
 
     );

@@ -1,4 +1,8 @@
-import '../assets/css/Footer.css'; // Puedes cambiar la ruta si usas otra estructura
+import '../assets/css/Footer.css'; 
+
+/**
+ * Pie de página estándar que aparece en todas las páginas.
+ */
 
 function Footer() {
     return (

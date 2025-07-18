@@ -3,15 +3,22 @@ import '../assets/css/Filter.css';
 import { useNavigate } from 'react-router-dom';
 import recetas from "../services/recetas";
 
-function Filter() {
-    const [buscar, setBuscar] = useState('');
-    const navigate = useNavigate();
+/**
+ * Componente de filtro inicial para búsqueda.
+ * Permite seleccionar ingredientes desde la página del inicio.
+ */
 
+
+function Filter() {
+    const [buscar, setBuscar] = useState(''); // para almacenar el texto de búsqueda
+    const navigate = useNavigate(); // para redirigir al usuario
+    
+    // Llama al backend para buscar recetas por título y navega a la vista de resultados
     const buscarPorTitulo = async () => {
         try {
-            const response = await recetas.buscarRecetasPorTitulo(buscar);
-            const resultados = response.data;
-
+            const response = await recetas.buscarRecetasPorTitulo(buscar); 
+            const resultados = response.data; 
+            // Navega a la vista de resultados, pasando título y resultados por location.state
             navigate('/search-title', {
                 state: {
                     titulo: buscar,
@@ -24,14 +31,14 @@ function Filter() {
             alert("No se pudieron obtener resultados de la búsqueda.");
         }
     };
-
+    // manejo el envío del formulario
     const handleSubmit = (e) => {
-        e.preventDefault();
+        e.preventDefault(); // evita que se recargue la página
         if (buscar.trim() !== '') {
-            buscarPorTitulo();
+            buscarPorTitulo(); // ejecuta la búsqueda si el campo no está vacío
         }
     };
-
+    // Renderiza el formulario de búsqueda
     return (
         <form className="d-flex mb-3" role="search" onSubmit={handleSubmit}>
             <input

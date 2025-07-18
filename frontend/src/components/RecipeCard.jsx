@@ -2,22 +2,28 @@ import React from 'react';
 import '../assets/css/RecipeCard.css';
 import {useNavigate} from "react-router-dom";
 
-/*
-* Componente para mostrar las tarjetas de recetas
-* */
+/**
+ * Componente que representa visualmente una receta. Corresponde al surrogate
+ * Muestra su nombre, imagen y datos básicos.
+ *
+ * Props:
+ * - receta: objeto de receta a renderizar
+ */
+
 const RecipeCard = ({ receta }) => {
+    // Si no se recibe una receta válida, muestra un mensaje de que no se ve la receta
     if (!receta) return 'No se ve la receta';
-    //console.log("Receta recibida en /search:", receta);
 
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // para redireccionar a otra vista
 
-    // enviar la receta elegida
+    // Función que redirige a la vista de detalles de la receta
     const RecetaInfo = () => {
-        navigate('/result', { state: receta})
+        navigate('/result', { state: receta}) // Navega y pasa la receta seleccionada
     }
 
     return (
         <div className="recipe-card">
+            {/* Muestra la imagen de la receta si existe, de lo contrario un placeholder */}
             {receta.imagen_url ? (
                 <img
                     src={receta.imagen_url}
@@ -29,7 +35,7 @@ const RecipeCard = ({ receta }) => {
                     <span>Sin imagen</span>
                 </div>
             )}
-
+            {/* Overlay que aparece al hacer hover con más información */}
             <div className="recipe-overlay"> {/*Este es el hover de la tarjeta que muetras más info de la receta y donde se puede seleccionar para verla*/}
                 <p><strong>Categoría:</strong> {receta.categoria || '—'}</p>
                 <p><strong>Porciones:</strong> {receta.porciones || '—'}</p>
@@ -38,6 +44,7 @@ const RecipeCard = ({ receta }) => {
                 <p><strong>Plato:</strong> {receta.tipoPlato || '—'}</p>
                 <button className="ver-receta" onClick={RecetaInfo}>VER RECETA</button>
             </div>
+            {/* Contenido visible de la tarjeta (fuera del hover) */}
             <div className="recipe-content"> {/*Cara principal de la receta*/}
                 <h3 className="recipe-titles">{receta.titulo}</h3>
                 <p className="recipe-time">Tiempo estimado: {receta.tiempo}</p>

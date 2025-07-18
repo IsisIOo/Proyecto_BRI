@@ -3,6 +3,12 @@ import Plate from "../Plate.jsx";
 import Footer from "../Footer.jsx";
 import '../../assets/css/Home.css';
 
+/**
+ * Página principal del proyecto.
+ * Muestra el título y el componente <Filter> para iniciar una búsqueda.
+ * Luego renderiza <Plate> con contenido destacado o recetas generales.
+ */
+
 function Home() {
     return (
         <>

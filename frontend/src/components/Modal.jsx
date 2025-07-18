@@ -8,28 +8,32 @@ import Fuse from 'fuse.js';
 * */
 function Modal({ title, content, onClose, onSelect, position = 'center', seleccionadosGlobales = [], onRemoveIngrediente }) {
 
-
-    /* Para indicar la posición del modal*/
+    // Define la clase de posición del modal (izquierda, derecha o centro)
     const positionClass =
         position === 'left' ? 'modal-left' :
             position === 'right' ? 'modal-right' :
                 'modal-center';
 
     /* Para poder realizar la búsqueda de ingredientes con fuse*/
+    // Estado para la búsqueda en el modal
     const [busqueda, setBusqueda] = useState('');
+    // Estado para los ingredientes disponibles en esta categoría con su estado de selección
     const [selecciones, setSelecciones] = useState([]);
 
+    // Configuración de Fuse.js para búsqueda difusa de ingredientes
     const fuse = new Fuse(selecciones, {
         keys: ['nombre'],
-        threshold: 0.4, // Ajusta la sensibilidad (0 = exacto, 1 = muy permisivo)
+        threshold: 0.4, // Ajusta la sensibilidad (0 = exacto, 1 = muy permisivo) 
     });
 
     /*Se obtienen los ingredientes filtrados*/
+    // Lista de ingredientes filtrados según la búsqueda
     const resultadosFiltrados = busqueda
         ? fuse.search(busqueda).map(result => result.item)
         : selecciones;
 
     /*Inicializa los ingredientes seleccionados como vacio*/
+    // Cargar ingredientes al montar el componente o al cambiar props
     useEffect(() => {
         setSelecciones(prev => {
             return content.map(item => {
@@ -37,23 +41,22 @@ function Modal({ title, content, onClose, onSelect, position = 'center', selecci
                 return {
                     nombre: item,
                     categoria: title,
+                    // Marca como seleccionado si ya lo estaba antes o viene desde seleccionadosGlobales
                     seleccionado: existente ? existente.seleccionado : seleccionadosGlobales.some(i => i.nombre === item)
                 };
             });
         });
     }, [content, seleccionadosGlobales]);
 
-
-
-
     /*Para seleccionar ingredientes*/
+    // Alterna la selección de un ingrediente
     const toggleSeleccion = (nombre) => {
         setSelecciones(prev => {
             const nuevoEstado = prev.map(item =>
                 item.nombre === nombre ? { ...item, seleccionado: !item.seleccionado } : item
             );
 
-            // Si estaba seleccionado y lo desmarcó, lo quitamos globalmente
+            // Si el ingrediente estaba seleccionado y se deseleccionó, se elimina del estado global
             const fueSeleccionado = prev.find(item => item.nombre === nombre)?.seleccionado;
             if (fueSeleccionado) {
                 onRemoveIngrediente(nombre);
@@ -65,12 +68,13 @@ function Modal({ title, content, onClose, onSelect, position = 'center', selecci
 
 
     /*Para confirmar la selección de ingredientes*/
+    // Confirma y envía los ingredientes seleccionados al componente padre
     const confirmarSeleccion = () => {
         const seleccionados = selecciones
             .filter(item => item.seleccionado)
-            .map(item => item.nombre);
-        onSelect(seleccionados);
-        onClose();
+            .map(item => item.nombre); 
+        onSelect(seleccionados); // envía selección al padre
+        onClose(); // cierra el modal
     };
 
     return (
@@ -80,7 +84,7 @@ function Modal({ title, content, onClose, onSelect, position = 'center', selecci
                     <h2 className="modal-title">{title}</h2>
                     <button className="modal-close" onClick={onClose}>×</button>
                 </div>
-
+                {/* Input para buscar ingredientes */}
                 {/*Este es el elemento que realiza la búsqueda de ingredientes*/}
                 <div className="modal-filter">
                     <input
@@ -92,6 +96,7 @@ function Modal({ title, content, onClose, onSelect, position = 'center', selecci
                 </div>
 
                 {/*Se muestra el contenido de ingredientes como check-boxs*/}
+                {/* Lista de ingredientes con checkbox */}
                 <div className="modal-scrollable-content">
                     <ul className="checkbox-list">
                         {resultadosFiltrados.map((item, index) => (
@@ -109,7 +114,7 @@ function Modal({ title, content, onClose, onSelect, position = 'center', selecci
                     </ul>
 
                 </div>
-
+                {/* Botón para confirmar la selección */}
                 <div className="modal-footer">
                     <button className="select-button" onClick={confirmarSeleccion}>Seleccionar</button>
                 </div>

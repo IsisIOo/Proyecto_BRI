@@ -262,6 +262,7 @@ def buscar_por_ingredientes():
 
     ingredientes = request.args.getlist("ingrediente")  # Obtiene los ingredientes desde los parámetros de la URL
 
+    print("Ingredientes recibidos en backend:", ingredientes)
     if not ingredientes:
         # Si no se recibe ningún ingrediente, se devuelve un error 400
         return jsonify({"error": "Debe proporcionar al menos un ingrediente."}), 400

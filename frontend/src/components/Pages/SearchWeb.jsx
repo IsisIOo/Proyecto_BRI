@@ -10,13 +10,30 @@ import BackToHomeButton from "../BackToHomeButton.jsx";
 
 import IngredientesBox from "../IngredientesBox.jsx";
 
+/**
+ * Página principal de resultados por búsqueda de ingredientes.
+ * Muestra las recetas clasificadas en 4 categorías:
+ * - Exactos: recetas que coinciden exactamente con los ingredientes.
+ * - Con más: recetas que contienen los ingredientes seleccionados y otros adicionales.
+ * - Parciales: recetas que coinciden con algunos (pero no todos) los ingredientes.
+ * - Solo uno: recetas que contienen solo uno de los ingredientes seleccionados.
+ *
+ * Permite aplicar filtros por tipo de plato, dieta y cocina.
+ * También muestra los ingredientes seleccionados y permite editarlos.
+ *
+ * Props esperadas vía `location.state`:
+ * - exactos: recetas exactas
+ * - con_mas: recetas con ingredientes adicionales
+ * - parciales: recetas con algunos ingredientes
+ * - solo_uno: recetas con uno solo
+ * - ingredientesSeleccionados: lista de ingredientes seleccionados por el usuario
+ */
 
 function SearchWeb() {
-    const navigate = useNavigate();
-    const location = useLocation();
+    const navigate = useNavigate(); // para navegación entre rutas
+    const location = useLocation(); // para acceder a los datos pasados mediante navegación (location.state)
 
-    // Extraemos las 3 categorías si vienen desde el backend
-    
+    // Se extraen las listas de recetas clasificadas y los ingredientes seleccionados desde el backend
     const {
         exactos = [],
         con_mas = [],
@@ -25,12 +42,12 @@ function SearchWeb() {
         ingredientesSeleccionados = []
     } = location.state || {};
 
-
+    // Función para volver a la página de inicio
     const Home = () => {
         navigate('/');
     };
 
-    // Combina todas las recetas para aplicar los filtros
+    // Combina todas las recetas en un solo array para aplicar filtros generales
     const todasLasRecetas = [...exactos, ...con_mas, ...parciales, ...solo_uno];
 
     // Estado para recetas filtradas por categoría
@@ -41,8 +58,10 @@ function SearchWeb() {
 
     const [recetasNoClasificadas, setRecetasNoClasificadas] = useState([]);
 
-
-
+    /**
+     * Para generar listas únicas de filtros para platos, dietas y cocinas,
+     * basándose en todas las recetas disponibles.
+     */
     const opcionesFiltro = useMemo(() => {
         const platos = new Set();
         const dietas = new Set();
@@ -61,21 +80,29 @@ function SearchWeb() {
         };
     }, [todasLasRecetas]);
 
-    const aplicarFiltros = ({ plato, dieta, cocina }) => {
-        const filtrar = (lista) => {
-            return lista.filter((receta) => {
-                const coincidePlato = plato === '' || receta.tipoPlato === plato;
-                const coincideDieta = dieta === '' || receta.dieta === dieta;
-                const coincideCocina = cocina === '' || receta.tipoCocina === cocina;
-                return coincidePlato && coincideDieta && coincideCocina;
-            });
-        };
+    /**
+     * Para filtrar cada grupo de recetas según los criterios seleccionados por el usuario.
+     * Se actualizan los estados de recetas filtradas por categoría.
+     */
+    function aplicarFiltros({ plato, dieta, cocina }) {
+        const filtrar = (recetas) => recetas.filter((receta) => {
+            const coincidePlato = !plato || receta.tipoPlato === plato;
+            const coincideDieta = !dieta || receta.dieta === dieta;
+            const coincideCocina = !cocina || receta.tipoCocina === cocina;
+            return coincidePlato && coincideDieta && coincideCocina;
+        });
 
         setFiltradasExactas(filtrar(exactos));
         setFiltradasConMas(filtrar(con_mas));
         setFiltradasParciales(filtrar(parciales));
-    };
+        setFiltradasSoloUno(filtrar(solo_uno));
+    }
 
+
+    /**
+     * Para asegurar  que los estados de recetas filtradas se sincronicen con los datos recibidos
+     * cada vez que se actualizan los resultados o los ingredientes seleccionados.
+     */
     useEffect(() => {
         setFiltradasExactas(exactos);
         setFiltradasConMas(con_mas);
@@ -95,11 +122,12 @@ function SearchWeb() {
         return conjunto;
     }, [filtradasExactas, filtradasConMas, filtradasParciales, filtradasSoloUno]);
 
-
+    // Renderización principal del componente
     return (
 
             <div className="page-container">
                 <div className="content">
+                    {/* Encabezado con título, filtros y botón de volver */}
                     <div className="gradient-separator" style={{ minHeight: '220px', padding: '10px'}}>
                         <h1 onClick={Home} style={{ marginTop: "20px" }}>
                             Recetas del Toto del Oeste
@@ -113,9 +141,9 @@ function SearchWeb() {
                         />
                         
                     </div>
-
+                    {/* Sección principal dividida en 2 columnas */}
                     <div className="resultados-layout" style={{ display: 'flex', marginTop: '15px' }}>
-                        {/* Columna izquierda: botón + ingredientes seleccionados */}
+                        {/* Columna izquierda: botón e ingredientes seleccionados */}
                         <div style={{ flex: '1', maxWidth: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <div style={{ marginBottom: '15px', alignSelf: 'stretch', display: 'flex', justifyContent: 'center' }}>
                                 <BackToHomeButton />
@@ -127,7 +155,7 @@ function SearchWeb() {
                         </div>
 
 
-                        {/* Columna derecha: recetas */}
+                        {/* Columna derecha: secciones de recetas según clasificación */}
                         <div style={{ flex: 2, marginLeft: '20px' }} className="recetas-container">
                             {ingredientesSeleccionados.length === 1 ? (
                                 <>
@@ -229,6 +257,7 @@ function SearchWeb() {
 
 
                 </div>
+                {/* Pie de la página */}
                 <Footer />
             </div>
 
