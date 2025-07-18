@@ -31,7 +31,7 @@ function SearchWeb() {
     };
 
     // Combina todas las recetas para aplicar los filtros
-    const todasLasRecetas = [...exactos, ...con_mas, ...parciales];
+    const todasLasRecetas = [...exactos, ...con_mas, ...parciales, ...solo_uno];
 
     // Estado para recetas filtradas por categoría
     const [filtradasExactas, setFiltradasExactas] = useState(exactos);
