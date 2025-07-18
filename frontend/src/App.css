@@ -125,6 +125,16 @@
     margin: 0 auto;  /* Esto  centra horizontalmente en su contenedor */
 }
 
+.ingredientes-box .list-group-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
 
 .ingredientes-scroll {
     max-height: 250px;
@@ -153,4 +163,56 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+
+.top-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch; /* que todas las cajas tengan misma altura */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.ingredients-box,
+.details-box,
+.image-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* ✅ centra verticalmente */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    border-radius: 10px;
+}
+
+
+.back-button {
+  display: inline-block;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: #1a1a1a;
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  white-space: nowrap;  
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.back-button:hover {
+  border-color: #646cff;
+}
+
+@media (prefers-color-scheme: light) {
+  .back-button {
+    background-color: #f9f9f9;
+    color: #213547;
+  }
 }

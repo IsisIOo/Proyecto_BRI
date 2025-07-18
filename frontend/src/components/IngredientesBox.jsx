@@ -9,9 +9,14 @@ function IngredientesBox({ ingredientes, onEditar }) {
                 ) : (
                     <ul className="list-group list-group-flush ingredientes-scroll">
                         {ingredientes.map((item, index) => (
-                            <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                {item}
+                            <li key={index} className="list-group-item text-center">
+                                <div>
+                                    <strong>{item.nombre}</strong><br />
+                                    <span className="text-muted small">{item.categoria}</span>
+                                </div>
                             </li>
+
+
                         ))}
                     </ul>
                 )}

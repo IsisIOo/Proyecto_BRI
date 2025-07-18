@@ -31,11 +31,18 @@ function Modal({ title, content, onClose, onSelect, position = 'center', selecci
 
     /*Inicializa los ingredientes seleccionados como vacio*/
     useEffect(() => {
-        setSelecciones(content.map(item => ({
-            nombre: item,
-            seleccionado: seleccionadosGlobales.includes(item) // Si ya estaba seleccionado, marcar
-        })));
+        setSelecciones(prev => {
+            return content.map(item => {
+                const existente = prev.find(i => i.nombre === item);
+                return {
+                    nombre: item,
+                    categoria: title,
+                    seleccionado: existente ? existente.seleccionado : seleccionadosGlobales.some(i => i.nombre === item)
+                };
+            });
+        });
     }, [content, seleccionadosGlobales]);
+
 
 
 

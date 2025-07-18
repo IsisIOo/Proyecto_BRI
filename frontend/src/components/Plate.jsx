@@ -23,30 +23,48 @@ function Plate() {
     const navigate = useNavigate(); // navegar
 
     /*Para guardar los ingredientes elegidos*/
-    const [ingredientesFinales, setIngredientesFinales] = useState(ingredientesDesdeBusqueda);
+    const [ingredientesFinales, setIngredientesFinales] = useState(
+        ingredientesDesdeBusqueda.map(item =>
+            typeof item === "string" ? { nombre: item, categoria: "Desconocida" } : item
+        )
+    );
+
 
 
     /*Para manejar la selección*/
-    const agregarIngredientesSeleccionados = (seleccionados) => {
-        setIngredientesFinales(prev => [...new Set([...prev, ...seleccionados])]);
+    const agregarIngredientesSeleccionados = (seleccionados, categoria) => {
+        const nuevos = seleccionados.map(nombre => ({ nombre, categoria }));
+        setIngredientesFinales(prev => {
+            const nombresExistentes = new Set(prev.map(i => i.nombre));
+            const nuevosUnicos = nuevos.filter(i => !nombresExistentes.has(i.nombre));
+            return [...prev, ...nuevosUnicos];
+        });
     };
 
+
     /* Para eliminar ingredientes*/
-    const eliminarIngrediente = (nombre) => {
-        setIngredientesFinales(prev => prev.filter(item => item !== nombre));
+    const eliminarIngrediente = (ingrediente) => {
+        const nombre = typeof ingrediente === 'string' ? ingrediente : ingrediente.nombre;
+        setIngredientesFinales(prev => prev.filter(item => item.nombre !== nombre));
     };
+
 
     const buscarRecetaIngrediente = async () => {
         try {
             await recetas.cargarRecetas();
 
-            const response = await recetas.buscarRecetasPorIngredientesAvanzado(ingredientesFinales);
+            // Extraer solo nombres
+            const soloNombres = ingredientesFinales.map(item => item.nombre);
+
+            const response = await recetas.buscarRecetasPorIngredientesAvanzado(soloNombres);
+
             const data = response.data;
 
+            // objetos con nombre y categoría al navegar
             navigate('/search', {
                 state: {
                     ...data,
-                    ingredientesSeleccionados: ingredientesFinales 
+                    ingredientesSeleccionados: ingredientesFinales
                 }
             });
 
@@ -55,6 +73,7 @@ function Plate() {
             alert("No se pudieron obtener recetas del backend.");
         }
     };
+
 
 
 
@@ -173,14 +192,18 @@ function Plate() {
                                 <ul className="list-group list-group-flush ingredientes-scroll">
                                     {ingredientesFinales.map((item, index) => (
                                         <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                            {item}
-                                            <button
-                                                className="btn btn-sm btn-outline-danger"
-                                                onClick={() => eliminarIngrediente(item)}
-                                            >
-                                                ✕
-                                            </button>
+                                        <div>
+                                            <strong>{item.nombre}</strong>
+                                            <div className="text-muted small">{item.categoria}</div>
+                                        </div>
+                                        <button
+                                            className="btn btn-sm btn-outline-danger"
+                                            onClick={() => eliminarIngrediente(item)}
+                                        >
+                                            ✕
+                                        </button>
                                         </li>
+
                                     ))}
                                 </ul>
                             )}
@@ -200,7 +223,7 @@ function Plate() {
                             setModalOpen(false);
                             setActiveSector(null);
                         }}
-                        onSelect={agregarIngredientesSeleccionados}
+                        onSelect={(seleccionados) => agregarIngredientesSeleccionados(seleccionados, modalData.title)}
                         seleccionadosGlobales={ingredientesFinales} 
                         onRemoveIngrediente={eliminarIngrediente}  
                     />

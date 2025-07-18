@@ -6,6 +6,8 @@ import Footer from "../Footer.jsx";
 import '../../assets/css/SeachWeb.css';
 import { useState, useEffect, useMemo } from "react";
 
+import BackToHomeButton from "../BackToHomeButton.jsx";
+
 import IngredientesBox from "../IngredientesBox.jsx";
 
 
@@ -98,8 +100,10 @@ function SearchWeb() {
 
             <div className="page-container">
                 <div className="content">
-                    <div className="gradient-separator" style={{ height: '220px', padding: '10px'}}>
-                        <h1 onClick={Home}>Recetas del Toto del Oeste</h1>
+                    <div className="gradient-separator" style={{ minHeight: '220px', padding: '10px'}}>
+                        <h1 onClick={Home} style={{ marginTop: "20px" }}>
+                            Recetas del Toto del Oeste
+                        </h1>
                         <Filter />
                         <Filter2
                             onFilter={aplicarFiltros}
@@ -107,9 +111,10 @@ function SearchWeb() {
                             opcionesDieta={opcionesFiltro.dietas}
                             opcionesCocina={opcionesFiltro.cocinas}
                         />
+                        <BackToHomeButton />
                     </div>
 
-                    <div className="resultados-layout" style={{ display: 'flex', marginTop: '20px' }}>
+                    <div className="resultados-layout" style={{ display: 'flex', marginTop: '15px' }}>
                         {/* Columna izquierda: ingredientes seleccionados */}
                         <div style={{ flex: '1', maxWidth: '300px' }}>
                             <IngredientesBox
@@ -120,69 +125,101 @@ function SearchWeb() {
 
                         {/* Columna derecha: recetas */}
                         <div style={{ flex: 2, marginLeft: '20px' }} className="recetas-container">
-                            {/* Recetas exactas */}
-                            <div className="recipe-section" style={{ paddingTop: '10px' }}>
-                                {filtradasExactas.length > 0 ? (
-                                    <div>
-                                        <h6><strong>Recetas con los ingredientes exactos:</strong></h6>
-                                        <div className="recipe-grid">
-                                            {filtradasExactas.map((receta, index) => (
-                                                <RecipeCard key={`e-${index}`} receta={receta} />
-                                            ))}
+                            {ingredientesSeleccionados.length === 1 ? (
+                                <>
+                                    {/* Recetas con solo uno */}
+                                    {filtradasSoloUno.length > 0 && (
+                                        <div className="recipe-section">
+                                            <h6><strong>Recetas con el ingrediente buscado:</strong></h6>
+                                            <div className="recipe-grid">
+                                                {filtradasSoloUno.map((receta, index) => (
+                                                    <RecipeCard key={`s-${index}`} receta={receta} />
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    <h6><strong>Recetas con los ingredientes exactos: </strong>No hay recetas exactas.</h6>
-                                )}
-                            </div>
-
-                            {/* Recetas con más ingredientes */}
-                            <div className="recipe-section" style={{ paddingTop: '25px' }}>
-                                {filtradasConMas.length > 0 ? (
-                                    <div>
-                                        <h6><strong>Recetas con los ingredientes seleccionados y otros más:</strong></h6>
-                                        <div className="recipe-grid">
-                                            {filtradasConMas.map((receta, index) => (
-                                                <RecipeCard key={`m-${index}`} receta={receta} />
-                                            ))}
+                                    )}
+                                    {/* Recetas con ese ingrediente y otros más */}
+                                    {filtradasConMas.length > 0 ? (
+                                        <div className="recipe-section" style={{ paddingTop: '10px' }}>
+                                            <h6><strong>Recetas con el ingrediente buscado y otros más:</strong></h6>
+                                            <div className="recipe-grid">
+                                                {filtradasConMas.map((receta, index) => (
+                                                    <RecipeCard key={`m-${index}`} receta={receta} />
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : (
-                                    <h6><strong>Recetas con los ingredientes seleccionados y otros más: </strong>No hay recetas con ingredientes adicionales.</h6>
-                                )}
-                            </div>
-
-                            {/* Recetas parciales */}
-                            <div className="recipe-section" style={{ paddingTop: '25px' }}>
-                                {filtradasParciales.length > 0 ? (
-                                    <div>
-                                        <h6><strong>Recetas con algunos de los ingredientes:</strong></h6>
-                                        <div className="recipe-grid">
-                                            {filtradasParciales.map((receta, index) => (
-                                                <RecipeCard key={`p-${index}`} receta={receta} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <h6><strong>Recetas con algunos de los ingredientes: </strong>No hay recetas parciales.</h6>
-                                )}
-                            </div>
-
-                            {/* Recetas con solo uno de los ingredientes */}
-                            <div className="recipe-section" style={{ paddingTop: '25px' }}>
-                            {filtradasSoloUno.length > 0 ? (
-                                <div>
-                                <h6><strong>Recetas con solo uno de los ingredientes:</strong></h6>
-                                <div className="recipe-grid">
-                                    {filtradasSoloUno.map((receta, index) => (
-                                    <RecipeCard key={`s-${index}`} receta={receta} />
-                                    ))}
-                                </div>
-                                </div>
+                                    ) : (
+                                        <h6><strong>Recetas con el ingrediente buscado y otros más:</strong> No se encontraron resultados adicionales.</h6>
+                                    )}
+                                </>
                             ) : (
-                                <h6><strong>Recetas con solo uno de los ingredientes:</strong> No hay recetas con un solo ingrediente.</h6>
+                                <>
+                                    {/* Recetas exactas */}
+                                    <div className="recipe-section" style={{ paddingTop: '10px' }}>
+                                        {filtradasExactas.length > 0 ? (
+                                            <div>
+                                                <h6><strong>Recetas con los ingredientes exactos:</strong></h6>
+                                                <div className="recipe-grid">
+                                                    {filtradasExactas.map((receta, index) => (
+                                                        <RecipeCard key={`e-${index}`} receta={receta} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <h6><strong>Recetas con los ingredientes exactos:</strong> No hay recetas exactas.</h6>
+                                        )}
+                                    </div>
+
+                                    {/* Con más */}
+                                    <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                                        {filtradasConMas.length > 0 ? (
+                                            <div>
+                                                <h6><strong>Recetas con los ingredientes seleccionados y otros más:</strong></h6>
+                                                <div className="recipe-grid">
+                                                    {filtradasConMas.map((receta, index) => (
+                                                        <RecipeCard key={`m-${index}`} receta={receta} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <h6><strong>Recetas con los ingredientes seleccionados y otros más:</strong> No hay recetas con ingredientes adicionales.</h6>
+                                        )}
+                                    </div>
+
+                                    {/* Parciales */}
+                                    <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                                        {filtradasParciales.length > 0 ? (
+                                            <div>
+                                                <h6><strong>Recetas con algunos de los ingredientes:</strong></h6>
+                                                <div className="recipe-grid">
+                                                    {filtradasParciales.map((receta, index) => (
+                                                        <RecipeCard key={`p-${index}`} receta={receta} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <h6><strong>Recetas con algunos de los ingredientes:</strong> No hay recetas parciales.</h6>
+                                        )}
+                                    </div>
+
+                                    {/* Solo uno */}
+                                    <div className="recipe-section" style={{ paddingTop: '25px' }}>
+                                        {filtradasSoloUno.length > 0 ? (
+                                            <div>
+                                                <h6><strong>Recetas con solo uno de los ingredientes:</strong></h6>
+                                                <div className="recipe-grid">
+                                                    {filtradasSoloUno.map((receta, index) => (
+                                                        <RecipeCard key={`s-${index}`} receta={receta} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <h6><strong>Recetas con solo uno de los ingredientes:</strong> No hay recetas con un solo ingrediente.</h6>
+                                        )}
+                                    </div>
+                                </>
                             )}
-                            </div>
+
                         </div>
                     </div>
 

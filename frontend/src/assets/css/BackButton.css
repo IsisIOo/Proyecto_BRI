@@ -1,0 +1,27 @@
+.back-button {
+  display: inline-block;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: #1a1a1a;
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  white-space: nowrap;  
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.back-button:hover {
+  border-color: #004D00;
+}
+
+@media (prefers-color-scheme: light) {
+  .back-button {
+    background-color: #45A849;
+    color: #ffffff;
+  }
+}

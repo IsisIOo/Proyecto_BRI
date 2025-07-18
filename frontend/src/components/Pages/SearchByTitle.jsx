@@ -5,6 +5,7 @@ import Footer from "../Footer.jsx";
 import Filter from "../Filter.jsx";
 import Filter2 from "../Filter2.jsx";
 import '../../assets/css/SeachWeb.css';
+import BackToHomeButton from "../BackToHomeButton.jsx";
 
 function SearchByTitle() {
     const location = useLocation();
@@ -55,8 +56,11 @@ function SearchByTitle() {
     return (
         <div className="page-container">
             <div className="content">
-                <div className="gradient-separator" style={{ height: '220px', padding: '10px' }}>
-                    <h1 onClick={volverInicio}>Recetas del Toto del Oeste</h1>
+                <div className="gradient-separator" style={{ minHeight: '220px', padding: '10px' }}>
+                    <h1 onClick={volverInicio} style={{ marginTop: "20px" }}>
+                        Recetas del Toto del Oeste
+                    </h1>
+
                     <Filter />
                     <Filter2
                         onFilter={aplicarFiltros}
@@ -64,7 +68,8 @@ function SearchByTitle() {
                         opcionesDieta={opcionesFiltro.dietas}
                         opcionesCocina={opcionesFiltro.cocinas}
                     />
-                    <h5 style={{ marginTop: '30px' }}>Resultados para: <em>{tituloBuscado}</em></h5>
+                    <BackToHomeButton />
+                    <h5 style={{ marginTop: '30px', marginBottom: '40px' }}>Resultados para: <em>{tituloBuscado}</em></h5>
                 </div>
 
                 <div className="recipe-section" style={{ paddingTop: '50px' }}>
