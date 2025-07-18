@@ -74,7 +74,6 @@ function Modal({ title, content, onClose, onSelect, position = 'center', selecci
             .filter(item => item.seleccionado)
             .map(item => item.nombre); 
         onSelect(seleccionados); // envía selección al padre
-        onClose(); // cierra el modal
     };
 
     return (
